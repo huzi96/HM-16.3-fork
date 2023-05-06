@@ -1,0 +1,14 @@
+bin/*
+build/linux/app/TAppDecoder/objects/*
+build/linux/app/TAppDecoderAnalyser/objects/*
+build/linux/app/TAppEncoder/objects/*
+build/linux/lib/TAppCommon/objects/*
+build/linux/lib/TLibCommon/objects/*
+build/linux/lib/TLibDecoder/objects/*
+build/linux/lib/TLibDecoderAnalyser/objects/*
+build/linux/lib/TLibEncoder/objects/*
+build/linux/lib/TLibVideoIO/objects/*
+build/linux/utils/annexBbytecount/objects/*
+build/linux/utils/convert_NtoMbit_YCbCr/objects/*
+lib/*
+playground/*
