@@ -11,4 +11,8 @@ build/linux/lib/TLibVideoIO/objects/*
 build/linux/utils/annexBbytecount/objects/*
 build/linux/utils/convert_NtoMbit_YCbCr/objects/*
 lib/*
-playground/*
+playground*/*
+*.png
+*.npy
+*.yuv
+*.pkl

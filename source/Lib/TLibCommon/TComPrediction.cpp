@@ -552,10 +552,31 @@ Void TComPrediction::motionCompensation ( TComDataCU* pcCU, TComYuv* pcYuvPred, 
     }
     return;
   }
-
+#ifdef DUMP_MV
+  /* Print current frame index */
+  fprintf(stderr, "Current Frame Index=%d\n", pcCU->getSlice()->getPOC());
+#endif
   for ( iPartIdx = 0; iPartIdx < pcCU->getNumPartitions(); iPartIdx++ )
   {
     pcCU->getPartIndexAndSize( iPartIdx, uiPartAddr, iWidth, iHeight );
+#ifdef DUMP_MV
+    /* Print CU info */
+    // fprintf(stderr, "\nPartition Mode=%d, uiPartAddr=%d, uiWidth=%d, uiHeight=%d\n", pcCU->getPartitionSize(uiPartAddr), uiPartAddr, iWidth, iHeight);
+    // Print CU position info
+    // fprintf(stderr, "X=%d, Y=%d, Width=%d, Height=%d\n", pcCU->getCUPelX(), pcCU->getCUPelY(), pcCU->getWidth(uiPartAddr), pcCU->getHeight(uiPartAddr));
+    /* End */
+
+    /* Dump Human readable CU / PU info */
+    // CU
+    fprintf(stderr, "X=%d, Y=%d, Width=%d, Height=%d\n", pcCU->getCUPelX(), pcCU->getCUPelY(), pcCU->getWidth(uiPartAddr), pcCU->getHeight(uiPartAddr));
+    // PU
+    fprintf(stderr, "Partition Mode=%d, uiWidth=%d, uiHeight=%d\n", pcCU->getPartitionSize(uiPartAddr), iWidth, iHeight);
+
+    /* Dump reference frame index */
+    fprintf(stderr, "RefIdx=%d\n", pcCU->getCUMvField(REF_PIC_LIST_0)->getRefIdx(uiPartAddr));
+
+    /* End */
+#endif
 
     if ( eRefPicList != REF_PIC_LIST_X )
     {
@@ -681,6 +702,15 @@ Void TComPrediction::xPredInterBlk(const ComponentID compID, TComDataCU *cu, TCo
   Int     yFrac  = mv->getVer() & ((1<<shiftVer)-1);
   UInt    cxWidth  = width  >> refPic->getComponentScaleX(compID);
   UInt    cxHeight = height >> refPic->getComponentScaleY(compID);
+#ifdef DUMP_MV
+  /*For investigation of motion vectors*/
+  // Print component
+  char comp_char[] = "YUV";
+  fprintf(stderr, "%c-mv: %d,%d, refOffset: %d, refStride: %d, dstStride: %d, xFrac: %d, yFrac: %d, cxWidth: %d, cxHeight: %d\n", comp_char[compID], mv->getHor(), mv->getVer(), refOffset, refStride, dstStride, xFrac, yFrac, cxWidth, cxHeight);
+  fprintf(stderr, "shiftHor: %d, shiftVer: %d\n\n", shiftHor, shiftVer);
+  /* End */
+#endif
+  
 
   const ChromaFormat chFmt = cu->getPic()->getChromaFormat();
 
