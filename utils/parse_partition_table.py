@@ -122,9 +122,9 @@ def parse_partition_table(path):
         if not cu['frame_idx'] in by_frame_cu_list:
             by_frame_cu_list[cu['frame_idx']] = []
 
+        pu = parse_a_pu(lines, cu, 0, 0, uiWidth, uiHeight)
         if cu['mode'] == 0:
             # 2Nx2N only one PU
-            pu = parse_a_pu(lines, cu, 0, 0, uiWidth, uiHeight)
             cu['pu_list'] = [pu]
         else:
             # other cases
@@ -184,8 +184,11 @@ if __name__ == '__main__':
                 pu_y = y + pu['y']
                 pu_width = pu['width']
                 pu_height = pu['height']
+                if pu_x+pu_width > args.width or pu_y+pu_height > args.height:
+                    print(cu, pu)
+                    quit()
                 img[pu_y:pu_y+pu_height, pu_x:pu_x+pu_width, :] = draw_block_with_2pix_wide_border(pu_height, pu_width, color=(0, 255*i, 255*(1-i)))
-    cv2.imwrite('partition_table.png', img // 2)
+    cv2.imwrite('partition_table.png', img)
 
     # visualize motion vectors
     # and fill another image with block of motion vectors

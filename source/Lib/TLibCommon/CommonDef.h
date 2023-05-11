@@ -43,7 +43,7 @@
 #include <assert.h>
 
 /* Added by Yueyu (yyhu@nyu.edu) */
-#define DUMP_MV
+// #define DUMP_MV
 
 #if _MSC_VER > 1000
 // disable "signed and unsigned mismatch"
