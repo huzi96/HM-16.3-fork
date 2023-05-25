@@ -16,3 +16,8 @@ playground*/*
 *.npy
 *.yuv
 *.pkl
+playground2
+utils/*.log
+utils/HM_playground
+utils/TAppDecoderStaticPrintPT
+
