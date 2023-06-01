@@ -143,18 +143,17 @@ for current_frame_idx in range(1, args.num_frame):
             IPython.embed()
             quit()
     for cu in cu_list:
-        if cu['mode'] == 0:
-            # 2N x 2N
-            pu = cu['pu_list'][0]
+        for puid in range(len(cu['pu_list'])):
+            pu = cu['pu_list'][puid]
             anchor = (cu['x'] + pu['x'], cu['y'] + pu['y'])
-            cu_width = cu['width']
-            cu_height = cu['height']
+            pu_width = pu['width']
+            pu_height = pu['height']
             if args.input_type == 'high':
                 anchor = (anchor[0] * 2, anchor[1] * 2)
-                cu_width *= 2
-                cu_height *= 2
+                pu_width *= 2
+                pu_height *= 2
             motion_compensation(
-                dst_pred=pred_y[anchor[1]:anchor[1]+cu_height, anchor[0]:anchor[0]+cu_width],
+                dst_pred=pred_y[anchor[1]:anchor[1]+pu_height, anchor[0]:anchor[0]+pu_width],
                 interpolated_ref=padded_inter_ref_y,
                 anchor=anchor,
                 mv=(pu['y_mv'][0] * fct, pu['y_mv'][1] * fct),
@@ -162,59 +161,23 @@ for current_frame_idx in range(1, args.num_frame):
                 pad_size=pad_size
             )
             motion_compensation(
-                dst_pred=pred_u[anchor[1]//2:anchor[1]//2+cu_height//2, anchor[0]//2:anchor[0]//2+cu_width//2],
+                dst_pred=pred_u[anchor[1]//2:anchor[1]//2+pu_height//2, anchor[0]//2:anchor[0]//2+pu_width//2],
                 interpolated_ref=padded_inter_ref_u,
                 anchor=(anchor[0]//2, anchor[1]//2),
-                mv=(pu['u_mv'][0]//2 * fct, pu['u_mv'][1]//2 * fct),
+                mv=(pu['u_mv'][0]//2*fct, pu['u_mv'][1]//2*fct),
                 ref_idx=pu['ref_idx'],
                 pad_size=pad_size
             )
             motion_compensation(
-                dst_pred=pred_v[anchor[1]//2:anchor[1]//2+cu_height//2, anchor[0]//2:anchor[0]//2+cu_width//2],
+                dst_pred=pred_v[anchor[1]//2:anchor[1]//2+pu_height//2, anchor[0]//2:anchor[0]//2+pu_width//2],
                 interpolated_ref=padded_inter_ref_v,
                 anchor=(anchor[0]//2, anchor[1]//2),
-                mv=(pu['v_mv'][0]//2 * fct, pu['v_mv'][1]//2 * fct),
+                mv=(pu['v_mv'][0]//2*fct, pu['v_mv'][1]//2*fct),
                 ref_idx=pu['ref_idx'],
                 pad_size=pad_size
             )
-            mask_y[anchor[1]:anchor[1]+cu_height, anchor[0]:anchor[0]+cu_width] = 1
-            mask_uv[anchor[1]//2:anchor[1]//2+cu_height//2, anchor[0]//2:anchor[0]//2+cu_width//2] = 1
-        else:
-            for puid in range(2):
-                pu = cu['pu_list'][puid]
-                anchor = (cu['x'] + pu['x'], cu['y'] + pu['y'])
-                pu_width = pu['width']
-                pu_height = pu['height']
-                if args.input_type == 'high':
-                    anchor = (anchor[0] * 2, anchor[1] * 2)
-                    pu_width *= 2
-                    pu_height *= 2
-                motion_compensation(
-                    dst_pred=pred_y[anchor[1]:anchor[1]+pu_height, anchor[0]:anchor[0]+pu_width],
-                    interpolated_ref=padded_inter_ref_y,
-                    anchor=anchor,
-                    mv=(pu['y_mv'][0] * fct, pu['y_mv'][1] * fct),
-                    ref_idx=pu['ref_idx'],
-                    pad_size=pad_size
-                )
-                motion_compensation(
-                    dst_pred=pred_u[anchor[1]//2:anchor[1]//2+pu_height//2, anchor[0]//2:anchor[0]//2+pu_width//2],
-                    interpolated_ref=padded_inter_ref_u,
-                    anchor=(anchor[0]//2, anchor[1]//2),
-                    mv=(pu['u_mv'][0]//2*fct, pu['u_mv'][1]//2*fct),
-                    ref_idx=pu['ref_idx'],
-                    pad_size=pad_size
-                )
-                motion_compensation(
-                    dst_pred=pred_v[anchor[1]//2:anchor[1]//2+pu_height//2, anchor[0]//2:anchor[0]//2+pu_width//2],
-                    interpolated_ref=padded_inter_ref_v,
-                    anchor=(anchor[0]//2, anchor[1]//2),
-                    mv=(pu['v_mv'][0]//2*fct, pu['v_mv'][1]//2*fct),
-                    ref_idx=pu['ref_idx'],
-                    pad_size=pad_size
-                )
-                mask_y[anchor[1]:anchor[1]+pu_height, anchor[0]:anchor[0]+pu_width] = 1
-                mask_uv[anchor[1]//2:anchor[1]//2+pu_height//2, anchor[0]//2:anchor[0]//2+pu_width//2] = 1
+            mask_y[anchor[1]:anchor[1]+pu_height, anchor[0]:anchor[0]+pu_width] = 1
+            mask_uv[anchor[1]//2:anchor[1]//2+pu_height//2, anchor[0]//2:anchor[0]//2+pu_width//2] = 1
     crt_y = gt_y[current_frame_idx]
     crt_u = gt_u[current_frame_idx]
     crt_v = gt_v[current_frame_idx]
